@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: whichrenewables-stage-backend
+    restart: unless-stopped
+    ports:
+      - "5006:5000"
+    environment:
+      - NODE_ENV=staging
+      - PORT=5000
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - whichrenewables-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whichrenewables-stage-frontend
+    restart: unless-stopped
+    ports:
+      - "3006:80"
+    depends_on:
+      - backend
+    networks:
+      - whichrenewables-network
+
+networks:
+  whichrenewables-network:
+    driver: bridge
+```
+
+### Step 5: Create .dockerignore
+
+Create `.dockerignore` in project root:
+```
+node_modules
+.git
+.env
+build
+.DS_Store
+*.md
+README.md
+```
+
+Create `backend/.dockerignore`:
+```
+node_modules
+.git
+*.md
